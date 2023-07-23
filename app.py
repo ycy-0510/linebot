@@ -8,7 +8,7 @@ from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
 
-import requests
+from bus import getBus
 
 app = Flask(__name__)
 
@@ -19,6 +19,8 @@ def linebot():
         json_data = json.loads(body)                         # json 格式化訊息內容
         access_token = os.getenv('LINE_CHANNEL_ACCESS_TOKEN', None)
         secret = os.getenv('LINE_CHANNEL_SECRET', None)
+        print(access_token)
+        print(secret)
         line_bot_api = LineBotApi(access_token)              # 確認 token 是否正確
         handler = WebhookHandler(secret)                     # 確認 secret 是否正確
         signature = request.headers['X-line-signature']      # 加入回傳的 headers
@@ -29,8 +31,7 @@ def linebot():
             msg = json_data['events'][0]['message']['text']  # 取得 LINE 收到的文字訊息
             print(msg)                                     # 印出內容
             if '公車' in msg:
-                #req = requests('https://tdx.transportdata.tw/api/basic/v2/Bus/EstimatedTimeOfArrival/City/Taipei/265%E5%8D%80?%24top=100&%24format=JSON')
-                reply='公車人很多'
+                reply=getBus()
             else:
                 reply = f'我看不懂：{msg}'
         else:
