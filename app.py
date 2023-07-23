@@ -8,6 +8,8 @@ from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
 
+import requests
+
 app = Flask(__name__)
 
 @app.route("/callback", methods=['POST'])
@@ -25,8 +27,12 @@ def linebot():
         type = json_data['events'][0]['message']['type']     # 取得 LINe 收到的訊息類型
         if type=='text':
             msg = json_data['events'][0]['message']['text']  # 取得 LINE 收到的文字訊息
-            print(msg)                                       # 印出內容
-            reply = f'你告訴我：{msg}'
+            print(msg)                                     # 印出內容
+            if '公車' in msg:
+                #req = requests('https://tdx.transportdata.tw/api/basic/v2/Bus/EstimatedTimeOfArrival/City/Taipei/265%E5%8D%80?%24top=100&%24format=JSON')
+                reply='公車人很多'
+            else:
+                reply = f'我看不懂：{msg}'
         else:
             reply = '你傳的不是文字呦～'
         print(reply)
